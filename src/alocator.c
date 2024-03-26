@@ -114,25 +114,21 @@ void *mem_realloc(void *ptr, size_t size) {
         if (split_block != NULL) {
             tree_add_block(split_block);
         }
-        return ptr;
     }
-
     //increase in place
     else {
         struct block_header *next_block = get_block_next(block_curr);
         if (!is_busy(next_block) && get_curr_block_size(block_curr) + get_curr_block_size(next_block) >= size) {
             tree_remove_block(next_block);
             block_merge(block_curr, next_block);
-            return ptr;
-        } else {
-            new_ptr = mem_alloc(size);
-            if (new_ptr != NULL) {
-                memcpy(new_ptr, ptr, size_curr);
-                mem_free(ptr);
-            }
-            return new_ptr;
         }
     }
+    new_ptr = mem_alloc(size);
+    if (new_ptr != NULL) {
+        memcpy(new_ptr, ptr, size_curr);
+        mem_free(ptr);
+    }
+    return new_ptr;
 }
 
 static void show_node(const tree_node_type *node, const bool linked){
